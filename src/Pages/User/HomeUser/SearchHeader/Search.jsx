@@ -194,7 +194,15 @@ export default function Search(class1 = 'text-blue') {
               <div className='flex justify-between w-full py-2 mt-3 hover:bg-gray-300' key={element.cart_id}>
                 <div div className='flex gap-x-1  '>
                   <div className='h-20 w-20  '>
-                    <img src={element.product_images[0]} alt='' className='object-cover h-full w-full' />
+                    <img
+                      src={
+                        Array.isArray(element.product_images) && element.product_images.length > 0
+                          ? element.product_images[0] // Nếu có ảnh, lấy ảnh đầu tiên
+                          : 'path/to/default/image.jpg' // Nếu không có ảnh, dùng ảnh mặc định
+                      }
+                      alt=''
+                      className='object-cover h-full w-full'
+                    />
                   </div>
 
                   <p className='truncate overflow-hidden whitespace-nowrap w-[250px] text-base font-normal'>
@@ -287,7 +295,6 @@ export default function Search(class1 = 'text-blue') {
         <div className='flex items-center md:mb-4 px-24 '>
           <div className='flex w-full flex-col-reverse items-start md:flex-row gap-5'>
             {' '}
-
             <div className=' hidden md:flex shrink-0 '>
               <img
                 class='w-[70px] h-[70px] cursor-pointer rounded-full bg-white object-cover'
@@ -295,7 +302,6 @@ export default function Search(class1 = 'text-blue') {
                 alt='Pharmacity Logo'
               />
             </div>
-
             <div className='z-[11] grid w-full grid-cols-1 md:z-[10]'>
               <div className='w-full'>
                 <div className='mx-auto w-full'>

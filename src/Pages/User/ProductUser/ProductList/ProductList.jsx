@@ -1,15 +1,63 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import anh1 from '../../HomeUser/Component/SliderUser/img/sanpham.jpg'
 import anh2 from '../../HomeUser/Component/SliderUser/img/sanDeal.png'
 import Button1 from '../../../../Component/Button/Button'
 import Category from '../../HomeUser/Component/CategoryProduct/Category'
+import axios from 'axios'
+import ProductCard from '../ProductCard/ProductCard'
 export default function ProductList() {
+  const [products, setProducts] = useState([])
+  const [disease, setDisease] = useState([])
+  useEffect(() => {
+    const fetchDisease = async () => {
+      try {
+        const response = await axios.get('https://lucifernsz.com/PBL6-BE/public/api/disease')
+
+        console.log('API Response disease:', response.data.data) // Log the full response to check structure
+
+        // Assuming the response is { data: { products: [...] } } or { data: [...] }
+        const data = response.data.products || response.data.data // Adjust based on API structure
+
+        // Check if 'data' is an array before setting state
+        if (Array.isArray(data)) {
+          setDisease(data)
+        } else {
+          console.error('Expected an array but received:', data)
+        }
+      } catch (error) {
+        console.error('Error fetching disease:', error)
+      }
+    }
+
+    fetchDisease()
+  }, [])
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('https://lucifernsz.com/PBL6-BE/public/api/products')
+
+        console.log('API Response:', response.data.data) // Log the full response to check structure
+        const data = response.data.products || response.data.data // Adjust based on API structure
+
+        // Check if 'data' is an array before setting state
+        if (Array.isArray(data)) {
+          setProducts(data)
+        } else {
+          console.error('Expected an array but received:', data)
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error)
+      }
+    }
+
+    fetchProducts()
+  }, [])
   return (
     <div className='bg-white'>
       <div class='bg-neutral-100 h-3'></div>
       <div className='px-24 flex flex-col'>
         <div className='flex justify-between py-4'>
-          <h1 className='font-semibold line-clamp-1 text-base md:text-[20px]'>Sản phẩm bán chạy</h1>
+          <h1 className='font-semibold line-clamp-1 text-base md:text-[20px]'>Sản phẩm mới</h1>
           <a
             class='relative flex justify-center border-0 bg-transparent text-sm font-normal text-hyperLink outline-none md:hover:text-white md:text-blue'
             type='button'
@@ -20,241 +68,29 @@ export default function ProductList() {
         </div>
 
         <div className='mb-5'>
-          <div className='grid grid-cols-6 gap-x-4 '>
-            <div className='rounded-lg overflow-hidden border shadow-md bg-white  h-full'>
-              <div className='relative '>
-                <img className='w-full object-contain h-full' src={anh1} alt='' />
-                <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                  <img
-                    className='h-full w-full object-contain'
-                    src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                    alt='label'
-                    loading='lazy'
-                    width='500'
-                    height='500'
-                  />
-                </div>
-              </div>
-
-              <div className='p-2 pb-1 font-medium'>
-                <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                  Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                </h3>
-              </div>
-
-              <div className='p-2'>
-                <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                <div class='mb-2 flex items-center py-1 text-sm'>
-                  <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                      <path
-                        fill='currentColor'
-                        d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                      ></path>
-                    </svg>
-                  </span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                  <span class='text-neutral-600'>|</span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                </div>
-              </div>
-            </div>
-            <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-              <div className='relative'>
-                <img className='w-full object-contain h-full' src={anh1} alt='' />
-                <div className='absolute bottom-0 left-0 flex h-[100px] w-full'>
-                  <img
-                    className='h-full w-auto'
-                    src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                    alt='label'
-                    loading='lazy'
-                    width='500'
-                    height='500'
-                  />
-                </div>
-              </div>
-
-              <div className='p-2 pb-1 font-medium'>
-                <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                  Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                </h3>
-              </div>
-
-              <div className='p-2'>
-                <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                <div class='mb-2 flex items-center py-1 text-sm'>
-                  <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                      <path
-                        fill='currentColor'
-                        d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                      ></path>
-                    </svg>
-                  </span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                  <span class='text-neutral-600'>|</span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                </div>
-              </div>
-            </div>
-            <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-              <div className='relative'>
-                <img className='w-full object-contain h-full' src={anh1} alt='' />
-                <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                  <img
-                    className='h-full w-auto'
-                    src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                    alt='label'
-                    loading='lazy'
-                    width='500'
-                    height='500'
-                  />
-                </div>
-              </div>
-
-              <div className='p-2 pb-1 font-medium'>
-                <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                  Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                </h3>
-              </div>
-
-              <div className='p-2'>
-                <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                <div class='mb-2 flex items-center py-1 text-sm'>
-                  <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                      <path
-                        fill='currentColor'
-                        d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                      ></path>
-                    </svg>
-                  </span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                  <span class='text-neutral-600'>|</span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                </div>
-              </div>
-            </div>
-            <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-              <div className='relative'>
-                <img className='w-full object-contain h-full' src={anh1} alt='' />
-                <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                  <img
-                    className='h-full w-auto'
-                    src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                    alt='label'
-                    loading='lazy'
-                    width='500'
-                    height='500'
-                  />
-                </div>
-              </div>
-
-              <div className='p-2 pb-1 font-medium'>
-                <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                  Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                </h3>
-              </div>
-
-              <div className='p-2'>
-                <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                <div class='mb-2 flex items-center py-1 text-sm'>
-                  <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                      <path
-                        fill='currentColor'
-                        d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                      ></path>
-                    </svg>
-                  </span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                  <span class='text-neutral-600'>|</span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                </div>
-              </div>
-            </div>
-            <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-              <div className='relative'>
-                <img className='w-full object-contain h-full' src={anh1} alt='' />
-                <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                  <img
-                    className='h-full w-auto'
-                    src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                    alt='label'
-                    loading='lazy'
-                    width='500'
-                    height='500'
-                  />
-                </div>
-              </div>
-
-              <div className='p-2 pb-1 font-medium'>
-                <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                  Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                </h3>
-              </div>
-
-              <div className='p-2'>
-                <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                <div class='mb-2 flex items-center py-1 text-sm'>
-                  <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                      <path
-                        fill='currentColor'
-                        d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                      ></path>
-                    </svg>
-                  </span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                  <span class='text-neutral-600'>|</span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                </div>
-              </div>
-            </div>
-            <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-              <div className='relative'>
-                <img className='w-full object-contain h-full' src={anh1} alt='' />
-                <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                  <img
-                    className='h-full w-auto'
-                    src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                    alt='label'
-                    loading='lazy'
-                    width='500'
-                    height='500'
-                  />
-                </div>
-              </div>
-
-              <div className='p-2 pb-1 font-medium'>
-                <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                  Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                </h3>
-              </div>
-
-              <div className='p-2'>
-                <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                <div class='mb-2 flex items-center py-1 text-sm'>
-                  <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                      <path
-                        fill='currentColor'
-                        d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                      ></path>
-                    </svg>
-                  </span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                  <span class='text-neutral-600'>|</span>{' '}
-                  <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                </div>
-              </div>
-            </div>
+          <div className='grid grid-cols-6 gap-x-4 gap-y-4'>
+            {products
+              .sort((a, b) => new Date(b.product_created_at) - new Date(a.product_created_at))
+              .slice(0, 2 * 6)
+              .map((product) => (
+                <ProductCard
+                  product_id={product.product_id}
+                  image={
+                    product.product_images?.[0] ||
+                    'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/500x500/P02118_2_l.webp'
+                  }
+                  labelImage='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
+                  title={product.product_name}
+                  price={`${product.product_price}₫`}
+                  oldPrice={
+                    product.product_discount && product.product_discount !== '0.00'
+                      ? `${product.product_discount}₫`
+                      : 'Không giảm giá'
+                  }
+                  likes={product.likes || 0}
+                  soldCount={product.product_sold}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -276,259 +112,22 @@ export default function ProductList() {
           </div>
 
           <div className='mb-5'>
-            <div className='grid grid-cols-6 gap-x-4 '>
-              <div className='rounded-lg overflow-hidden border shadow-md bg-white  h-full'>
-                <div className='relative'>
-                  <img className='w-full object-contain h-full' src={anh1} alt='' />
-                  <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                    <img
-                      className='h-full w-auto'
-                      src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                      alt='label'
-                      loading='lazy'
-                      width='500'
-                      height='500'
-                    />
-                  </div>
-                </div>
-
-                <div className='p-2 pb-1 font-medium'>
-                  <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                    Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                  </h3>
-                </div>
-
-                <div className='p-2'>
-                  <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                  <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                  <div class='mb-2 flex items-center py-1 text-sm'>
-                    <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                        <path
-                          fill='currentColor'
-                          d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                        ></path>
-                      </svg>
-                    </span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                    <span class='text-neutral-600'>|</span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                  </div>
-                  <div class='flex flex-1 flex-col justify-end'>
-                    <div class='relative mt-1.5 h-[16px] overflow-hidden rounded-xl bg-red-500/50 px-2 py-[2px] text-center text-[10px] font-semibold text-white'>
-                      <div class='absolute left-0 top-0 z-[1] h-full rounded-xl bg-red-500'></div>
-                      <div class='absolute bottom-0 left-0 right-0 top-0 z-[2] flex items-center justify-center py-[1px] text-xs bg-red-500 w-[95%] rounded-xl'>
-                        Đang bán chạy
-                      </div>
-                    </div>
-                    <div class='flex items-end justify-center'></div>
-                  </div>
-                </div>
-              </div>
-              <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-                <div className='relative'>
-                  <img className='w-full object-contain h-full' src={anh1} alt='' />
-                  <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                    <img
-                      className='h-full w-auto'
-                      src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                      alt='label'
-                      loading='lazy'
-                      width='500'
-                      height='500'
-                    />
-                  </div>
-                </div>
-
-                <div className='p-2 pb-1 font-medium'>
-                  <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                    Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                  </h3>
-                </div>
-
-                <div className='p-2'>
-                  <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                  <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                  <div class='mb-2 flex items-center py-1 text-sm'>
-                    <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                        <path
-                          fill='currentColor'
-                          d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                        ></path>
-                      </svg>
-                    </span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                    <span class='text-neutral-600'>|</span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                  </div>
-                  <div class='flex flex-1 flex-col justify-end'>
-                    <div class='relative mt-1.5 h-[16px] overflow-hidden rounded-xl bg-red-500/50 px-2 py-[2px] text-center text-[10px] font-semibold text-white'>
-                      <div class='absolute left-0 top-0 z-[1] h-full rounded-xl bg-red-500'></div>
-                      <div class='absolute bottom-0 left-0 right-0 top-0 z-[2] flex items-center justify-center py-[1px] text-xs bg-red-500 w-[95%] rounded-xl'>
-                        Đang bán chạy
-                      </div>
-                    </div>
-                    <div class='flex items-end justify-center'></div>
-                  </div>
-                </div>
-              </div>
-              <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-                <div className='relative'>
-                  <img className='w-full object-contain h-full' src={anh1} alt='' />
-                  <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                    <img
-                      className='h-full w-auto'
-                      src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                      alt='label'
-                      loading='lazy'
-                      width='500'
-                      height='500'
-                    />
-                  </div>
-                </div>
-
-                <div className='p-2 pb-1 font-medium'>
-                  <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                    Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                  </h3>
-                </div>
-
-                <div className='p-2'>
-                  <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                  <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                  <div class='mb-2 flex items-center py-1 text-sm'>
-                    <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                        <path
-                          fill='currentColor'
-                          d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                        ></path>
-                      </svg>
-                    </span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                    <span class='text-neutral-600'>|</span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                  </div>
-                </div>
-              </div>
-              <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-                <div className='relative'>
-                  <img className='w-full object-contain h-full' src={anh1} alt='' />
-                  <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                    <img
-                      className='h-full w-auto'
-                      src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                      alt='label'
-                      loading='lazy'
-                      width='500'
-                      height='500'
-                    />
-                  </div>
-                </div>
-
-                <div className='p-2 pb-1 font-medium'>
-                  <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                    Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                  </h3>
-                </div>
-
-                <div className='p-2'>
-                  <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                  <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                  <div class='mb-2 flex items-center py-1 text-sm'>
-                    <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                        <path
-                          fill='currentColor'
-                          d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                        ></path>
-                      </svg>
-                    </span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                    <span class='text-neutral-600'>|</span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                  </div>
-                </div>
-              </div>
-              <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-                <div className='relative'>
-                  <img className='w-full object-contain h-full' src={anh1} alt='' />
-                  <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                    <img
-                      className='h-full w-auto'
-                      src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                      alt='label'
-                      loading='lazy'
-                      width='500'
-                      height='500'
-                    />
-                  </div>
-                </div>
-
-                <div className='p-2 pb-1 font-medium'>
-                  <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                    Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                  </h3>
-                </div>
-
-                <div className='p-2'>
-                  <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                  <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                  <div class='mb-2 flex items-center py-1 text-sm'>
-                    <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                        <path
-                          fill='currentColor'
-                          d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                        ></path>
-                      </svg>
-                    </span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                    <span class='text-neutral-600'>|</span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                  </div>
-                </div>
-              </div>
-              <div className='rounded-lg overflow-hidden border shadow-sm bg-white  h-full'>
-                <div className='relative'>
-                  <img className='w-full object-contain h-full' src={anh1} alt='' />
-                  <div className='absolute bottom-0 left-0 flex h-[26px] w-full'>
-                    <img
-                      className='h-full w-auto'
-                      src='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
-                      alt='label'
-                      loading='lazy'
-                      width='500'
-                      height='500'
-                    />
-                  </div>
-                </div>
-
-                <div className='p-2 pb-1 font-medium'>
-                  <h3 className='line-clamp-2 h-10 text-sm font-semibold'>
-                    Viên uống cho bà bầu Blackmores Pregnancy & Breast Feeding Gold cung cấp vitamin (60 viên){' '}
-                  </h3>
-                </div>
-
-                <div className='p-2'>
-                  <del class='block h-5 text-sm font-semibold text-neutral-600'></del>
-                  <span class='mt-[2px] block h-6 text-base font-bold text-blue'>625.000₫/Chai</span>
-                  <div class='mb-2 flex items-center py-1 text-sm'>
-                    <span class='p-icon inline-flex h-4 max-h-full w-4 max-w-full items-center align-[-0.125em] text-neutral-700'>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='25' height='24' fill='none' viewBox='0 0 25 24'>
-                        <path
-                          fill='currentColor'
-                          d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                        ></path>
-                      </svg>
-                    </span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>33.7k</span>
-                    <span class='text-neutral-600'>|</span>{' '}
-                    <span class='text-[14px] leading-[20px] mx-1 font-medium'>Đã bán 6.5k</span>
-                  </div>
-                </div>
-              </div>
+            <div className='grid grid-cols-6 gap-x-4 gap-y-4'>
+              {products
+                .filter((product) => product.product_discount > 0)
+                .slice(0, 2 * 6)
+                .map((product) => (
+                  <ProductCard
+                    key={product.product_id}
+                    image={product.product_images?.[0] || 'fallback-image-url.png'} // Use optional chaining with a fallback
+                    labelImage='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
+                    title={product.product_name}
+                    price={`${product.product_price}₫`}
+                    oldPrice={product.product_discount !== '0.00' ? `${product.product_discount}₫` : null}
+                    likes={product.likes || 0}
+                    soldCount={product.product_sold}
+                  />
+                ))}
             </div>
           </div>
         </div>

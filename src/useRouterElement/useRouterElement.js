@@ -87,7 +87,7 @@ export default function useRouterElement() {
           )
         },
         {
-          path: '/detail',
+          path: '/detail/:productID',
           element: (
             <MainLayoutUser>
               <DetailProduct />
@@ -373,14 +373,6 @@ export default function useRouterElement() {
         },
         {}
       ]
-    },
-    {
-      path: '/:idproduct',
-      element: (
-        <MainLayoutUser>
-          <DetailProduct />
-        </MainLayoutUser>
-      )
     },
     {
       path: '/',
