@@ -22,7 +22,7 @@ export const clearProfile = () => {
   localStorage.removeItem('profile')
 }
 
-export const BASE_URL = 'https://lucifernsz.com/PBL6_Pharmacity/BE/PBL6-BE/public/api'
+export const BASE_URL = 'https://lucifernsz.com/PBL6-BE/public/api'
 // SEO
 const removeSpecialCharacter = (stri) => {
   return stri.replace(/[^\w\s]/gi, '')

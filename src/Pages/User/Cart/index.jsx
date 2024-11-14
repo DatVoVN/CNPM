@@ -10,28 +10,30 @@ import { useQuery } from '@tanstack/react-query'
 import { AuthContext } from '../../../context/app.context'
 export default function Cart() {
   const { isAuthenticated, logout } = useContext(AuthContext)
-  // get list cart
+  const navigate = useNavigate()
+  const [products, setProducts] = useState([]) // Khởi tạo state cho sản phẩm
+
+  const [checkedProducts, setCheckedProducts] = useState([])
   const queryClient = useQueryClient()
   const { data } = useQuery({
     queryKey: ['getCart'],
     queryFn: CartAPI.getCart,
-    enabled: isAuthenticated // Chỉ gọi query khi người dùng đã đăng nhập
+    enabled: isAuthenticated
   })
 
-  const [products, setProducts] = useState([]) // Khởi tạo state cho sản phẩm
+  // Function to handle the "Mua hàng" button click
+  const handlePurchase = () => {
+    navigate('/order') // Redirect to the order page
+  }
 
-  // Lưu trạng thái của các sản phẩm được chọn
-  const [checkedProducts, setCheckedProducts] = useState([])
   useEffect(() => {
-    // Kiểm tra xem data có giá trị hợp lệ không
     if (data && data.data && Array.isArray(data.data.data)) {
       setProducts(data.data.data)
     } else {
       setProducts([])
     }
   }, [data])
-
-  const navigate = useNavigate()
+  console.log('Products', products)
   const [open, setOpen] = useState(false)
   const [modalText, setModalText] = useState('Bạn có chắc chắn muốn xóa sản phẩm này?')
   const [total, setTotal] = useState(0)
@@ -52,7 +54,6 @@ export default function Cart() {
       }
     })
   }
-  // ham cap nhat so luong
   const handleUpdateQuantity = (element, quantity) => {
     let elementProduct = {
       ...element,
@@ -61,7 +62,6 @@ export default function Cart() {
     return elementProduct
   }
 
-  // handle - +
   const mutateUpdate = useMutation({
     mutationFn: CartAPI.updateCart
   })
@@ -78,7 +78,7 @@ export default function Cart() {
           return products
             .filter((product) => checkedProducts.includes(product.cart_id))
             .reduce((total, product) => total + parseFloat(product.cart_price * product.cart_quantity), 0) // Ép kiểu về số
-        } // Chỉ tính lại khi  checkedProducts thay đổi
+        }
         setTotal(calculateTotal())
       },
       onError() {
@@ -113,10 +113,7 @@ export default function Cart() {
   const handleInputChange = (element, event) => {
     const cart_quantity = parseInt(event.target.value)
     console.log(cart_quantity)
-
-    // Kiểm tra giá trị nhập vào
     if (isNaN(cart_quantity) || cart_quantity < 1) {
-      // Nếu không hợp lệ, có thể xóa sản phẩm hoặc cập nhật lại số lượng
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.cart_id === element.cart_id ? { ...product, cart_quantity: '' } : product
@@ -417,8 +414,11 @@ export default function Cart() {
                 <div className='text-[#F22121] font-semibold'>{total}</div>
               </div>
               <div className='flex mt-2 '>
-                <button className='text-white font-medium text-2xl bg-[#1A51A2] px-4 py-2  rounded-lg w-full'>
-                  Mua hàng{' '}
+                <button
+                  onClick={handlePurchase}
+                  className='text-white font-medium text-2xl bg-[#1A51A2] px-4 py-2  rounded-lg w-full'
+                >
+                  Mua hàng
                 </button>
               </div>
             </div>

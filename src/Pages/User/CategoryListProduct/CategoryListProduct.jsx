@@ -1,35 +1,29 @@
 import React from 'react'
-import { useState, useEffect, useMemo } from 'react'
-import anh1 from './anh1.jpg'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { createSearchParams, useParams } from 'react-router-dom'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import useQueryParams from '../../../hook/useSearchParam'
 import productAPI from '../../../Api/user/product'
 import { Link } from 'react-router-dom'
 
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
 import categoryAPI from '../../../Api/user/category'
-import { IdcardOutlined } from '@ant-design/icons'
 import brandAPI from '../../../Api/user/brand'
-import { Previous } from 'iconsax-react'
 import { useLocation } from 'react-router-dom'
 import { schemaPrice } from '../../../Component/ValidateScheme/Validate'
 import Loading from '../../../Component/Loading/Loading'
 import { generateNameId } from '../../../until/index.js'
+import ProductCard from '../ProductUser/ProductCard/ProductCard.jsx'
 export default function CategoryListProduct() {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const brands = queryParams.getAll('brands[]') // sử dụng getAll để lấy tất cả giá trị
-  //console.log(brands) // kiểm tra xem cả hai thương hiệu có được lấy ra không
-  const [visibleBrands, setVisibleBrands] = useState(5) // Bắt đầu với 5 thương hiệu được hiển thị
-  // State để lưu danh sách thương hiệu sau khi lọc
-  const [filteredBrands, setFilteredBrands] = useState([])
-  // state để lưu brands[]
-  const [NameBrands, setNameBrands] = useState(brands || [])
+  const brands = queryParams.getAll('brands[]')
 
+  const [visibleBrands, setVisibleBrands] = useState(5)
+  const [filteredBrands, setFilteredBrands] = useState([])
+  const [NameBrands, setNameBrands] = useState(brands || [])
   const {
     register,
     handleSubmit,
@@ -44,53 +38,37 @@ export default function CategoryListProduct() {
       price_max: data.price_max,
       price_min: data.price_min
     }).toString()
-    //console.log(searchParams) // Kiểm tra chuỗi query được tạo
     navigate({
       pathname: `/category`,
       search: `?${searchParams}`
     })
   }
-
   const navigate = useNavigate()
   const { categorySlug } = useParams()
-  //console.log(categorySlug)
   const useQueryParameter = useQueryParams()
-  // useQueryParameter.category_name = categorySlug
   useQueryParameter.paginate = 6
   console.log(useQueryParameter)
   const { data: productsData } = useQuery({
-    // queryKey: ['product', queryParams],
-    // queryconfig như category hay order hay sort_by thay đổi thì nó useQuery lại
     queryKey: ['products', useQueryParameter],
-    // khi queryParams thay đổi thì useQuery tính năn như useEffect
     queryFn: () => {
-      // fix loi du lieu : as ProductListConfig
       return productAPI.getAllProduct(useQueryParameter)
     }
   })
-
-  // category
   if (useQueryParameter.category_name == 'Thuốc kê đơn') {
     var idcategory
     idcategory = 4
-    // ko kê đơn
   } else if (useQueryParameter.category_name == 'Thuốc không kê đơn') {
     idcategory = 3
   }
   const { data: getCategorybyid, isLoading } = useQuery({
-    // queryKey: ['product', queryParams],
-    // queryconfig như category hay order hay sort_by thay đổi thì nó useQuery lại
     queryKey: ['products', idcategory],
-    // khi queryParams thay đổi thì useQuery tính năn như useEffect
     queryFn: () => {
-      // fix loi du lieu : as ProductListConfig
       return categoryAPI.getCategorybyId(idcategory)
     },
-    staleTime: 1000 * 60 * 5, // Dữ liệu được coi là mới trong 5 phút
+    staleTime: 1000 * 60 * 5,
 
-    enabled: !!idcategory // chỉ cho phép query khi 'idcategory' có giá trị
+    enabled: !!idcategory
   })
-  // console.log(getCategorybyid?.data?.data.children)
 
   const handlePriceDes = () => {
     const searchParams = createSearchParams({
@@ -111,15 +89,13 @@ export default function CategoryListProduct() {
       sortlatest: false
     }).toString()
 
-    console.log(searchParams) // Kiểm tra chuỗi query được tạo
+    console.log(searchParams)
     navigate({
       pathname: `/category`,
       search: `?${searchParams}`
     })
   }
   const handleClickCategory = (categoryName) => {
-    // Điều hướng về trang gốc rồi thêm categoryName
-    //navigate(`/category/${categoryName}`)
     navigate({
       pathname: `/category`,
       search: `?${createSearchParams({
@@ -128,7 +104,6 @@ export default function CategoryListProduct() {
     })
   }
   const handleRadioChange = (e) => {
-    //destructuring (phá vỡ cấu trúc)
     const [price_min, price_max] = e.target.value.split('-')
     const searchParams = createSearchParams({
       ...useQueryParameter,
@@ -142,11 +117,8 @@ export default function CategoryListProduct() {
   }
 
   const isChecked = (min, max) => {
-    // So sánh đúng thứ tự max với price_max và min với price_min
     return useQueryParameter?.price_max == max && useQueryParameter?.price_min == min
   }
-
-  // api brand[]
   const { data: nameBrand, isSuccess } = useQuery({
     queryKey: ['getNameBrand'],
     queryFn: brandAPI.getNameBrand,
@@ -162,7 +134,7 @@ export default function CategoryListProduct() {
   }
   useEffect(() => {
     if (isSuccess && nameBrand?.data?.data) {
-      setFilteredBrands(nameBrand.data.data) // Lưu dữ liệu từ API vào state
+      setFilteredBrands(nameBrand.data.data)
     }
   }, [isSuccess, nameBrand])
 
@@ -185,18 +157,15 @@ export default function CategoryListProduct() {
           return brand !== e.target.value
         })
       }
-      // Create search parameters
       const searchParams = createSearchParams({
         ...useQueryParameter,
-        'brands[]': updateBrands // Update brands[] parameter
+        'brands[]': updateBrands
       }).toString()
-
-      // Navigate with updated search parameters
       navigate({
         pathname: `/category`,
         search: `?${searchParams}`
       })
-      return updateBrands // Update the state
+      return updateBrands
     })
   }
   if (isLoading) return <Loading />
@@ -401,43 +370,21 @@ export default function CategoryListProduct() {
               Giá tăng dần{' '}
             </button>
           </div>
-          <div className='grid grid-cols-5 px-3 py-4  gap-3'>
+          <div className='grid grid-cols-5 px-3 py-4 gap-3'>
             {productsData?.data?.data?.data &&
               productsData.data.data.data.map((element) => {
                 return (
-                  <div className='border border-1 shadow-lg rounded-lg overflow-hidden'>
-                    <Link to={`/${generateNameId(element.product_name, element.product_id)}`} className=' '>
-                      <img src={element.product_images} alt='' />
-                    </Link>
-
-                    <div className='p-3'>
-                      <Link to={`/${generateNameId(element.product_name, element.product_id)}`}>
-                        <h3 class='line-clamp-2  font-semibold text-base'>{element.product_name}</h3>
-                      </Link>
-                      <del class='block h-5 text-sm font-semibold text-neutral-600 mt-2'>115.000 đ</del>
-                      <span class='mt-[2px] block h-6 text-base font-bold text-blue '>
-                        {element.product_price}₫/Chai
-                      </span>
-                      <div class='flex items-center py-1 text-sm'>
-                        <span class='p-icon inline-flex h-4 max-h-full w-4 min-w-[16px] max-w-full items-center align-[-0.125em] text-neutral-700'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            width='25'
-                            height='24'
-                            fill='none'
-                            viewBox='0 0 25 24'
-                          >
-                            <path
-                              fill='currentColor'
-                              d='M17.22 2a6.2 6.2 0 0 0-4.72 2.16A6.2 6.2 0 0 0 7.78 2a6.26 6.26 0 0 0-4.55 10.58l8.55 8.9a1 1 0 0 0 1.44 0l8.55-8.9h.01A6.26 6.26 0 0 0 17.22 2Z'
-                            ></path>
-                          </svg>
-                        </span>
-                        <span class='text-[16px] leading-[20px] mx-1 font-medium mt-1'>35.2k</span>
-                        <span class='text-neutral-600'>|</span>
-                        <span class='text-[16px] leading-[20px] mx-1 font-medium mt-1'>Đã bán 7.8k</span>
-                      </div>
-                    </div>
+                  <div key={element.product_id} className='border border-1 shadow-lg rounded-lg overflow-hidden'>
+                    <ProductCard
+                      product_id={element.product_id}
+                      image={element.product_images?.[0] || 'fallback-image-url.png'}
+                      labelImage='https://prod-cdn.pharmacity.io/e-com/images/ecommerce/20240225082630-0-mua-1-tang-1.png'
+                      title={element.product_name}
+                      price={`${element.product_price}₫`}
+                      oldPrice={element.product_discount !== '0.00' ? `${element.product_discount}₫` : null}
+                      likes={element.likes || 0}
+                      soldCount={element.product_sold}
+                    />
                   </div>
                 )
               })}
@@ -447,34 +394,3 @@ export default function CategoryListProduct() {
     </div>
   )
 }
-
-// <img src={element.product_images} alt='' />
-// <p className='text-blue p-3'>Thiết lập lại</p>
-// <div class='bg-neutral-100 h-3 mt-12'></div>
-
-// <li class='h-5 text-sm'>
-//                   <span class='hover:text-neutral-800 mx-1 font-normal text-[12px] leading-5'>
-//                     <a href='/cham-soc-sac-dep'>Chăm sóc sắc đẹp</a>
-//                   </span>
-//                   <span class='p-icon inline-flex align-[-0.125em] justify-center max-h-full max-w-full h-3 w-3 text-neutral-800'>
-//                     <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-//                       <path
-//                         d='M17.2137 11.2862L8.21971 2.29524C7.82506 1.90159 7.18567 1.90159 6.79002 2.29524C6.39537 2.68889 6.39537 3.32829 6.79002 3.72194L15.0706 11.9995L6.79102 20.2771C6.39637 20.6707 6.39637 21.3101 6.79102 21.7048C7.18567 22.0984 7.82606 22.0984 8.22071 21.7048L17.2147 12.7139C17.6032 12.3243 17.6032 11.6749 17.2137 11.2862Z'
-//                         fill='currentColor'
-//                       ></path>
-//                     </svg>
-//                   </span>
-//                 </li>
-//                 <li class='h-5 text-sm'>
-//                   <span class='hover:text-neutral-800 mx-1 font-normal text-[12px] leading-5'>
-//                     <a href='/san-pham-chong-nang'>Sản phẩm chống nắng</a>
-//                   </span>
-//                   <span class='p-icon inline-flex align-[-0.125em] justify-center max-h-full max-w-full h-3 w-3 text-neutral-800'>
-//                     <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-//                       <path
-//                         d='M17.2137 11.2862L8.21971 2.29524C7.82506 1.90159 7.18567 1.90159 6.79002 2.29524C6.39537 2.68889 6.39537 3.32829 6.79002 3.72194L15.0706 11.9995L6.79102 20.2771C6.39637 20.6707 6.39637 21.3101 6.79102 21.7048C7.18567 22.0984 7.82606 22.0984 8.22071 21.7048L17.2147 12.7139C17.6032 12.3243 17.6032 11.6749 17.2137 11.2862Z'
-//                         fill='currentColor'
-//                       ></path>
-//                     </svg>
-//                   </span>
-//                 </li>

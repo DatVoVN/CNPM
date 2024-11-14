@@ -26,9 +26,10 @@ import UpdatePassword from '../Pages/User/Account/personal-info/components/Updat
 import { AuthContext } from '../context/app.context.jsx'
 import NotPermitted from '../Component/NotPermitted/NotPermitted.jsx'
 import AdminLogin from '../Component/AdminLogin/AdminLogin.jsx'
+import Order from '../Pages/User/Order/Order.jsx'
 export default function useRouterElement() {
   const isAdminRoute = window.location.pathname.toLowerCase().startsWith('/admin')
-
+  // Router có sửa
   const userRole = 'admin'
 
   const ProtectRoute = () => {
@@ -83,6 +84,14 @@ export default function useRouterElement() {
           element: (
             <MainLayoutUser>
               <CategoryListProduct />
+            </MainLayoutUser>
+          )
+        },
+        {
+          path: '/order',
+          element: (
+            <MainLayoutUser>
+              <Order />
             </MainLayoutUser>
           )
         },

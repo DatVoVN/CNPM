@@ -1,22 +1,20 @@
+// Hiên thị danh mục
 import React, { useContext } from 'react'
 import { Popover } from 'antd'
-import Button1 from '../../../../Component/Button/Button'
 import Avatar1 from '../../../../Component/Avatar/Avatar'
-import { useNavigate, createSearchParams, Link, useLocation } from 'react-router-dom'
+import { useNavigate, createSearchParams, Link } from 'react-router-dom'
 import { useState } from 'react'
 import CartAPI from '../../../../Api/user/cart.js'
-import { useQuery, useQueryClient, QueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Badge } from 'antd'
 import { Button } from 'antd'
 import { AuthContext } from '../../../../context/app.context'
 import categoryAPI from '../../../../Api/user/category.js'
-import Anh from './_480f2c92-d896-48ef-978c-6c37301968f7-removebg-preview.png'
 export default function Search(class1 = 'text-blue') {
   const { isAuthenticated, logout, isProfile } = useContext(AuthContext)
   const [openCategory, setopenCategory] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const handleClickCategory = (categoryName) => {
-    // Điều hướng về trang gốc rồi thêm categoryName
-    // navigate(`/category/${categoryName}`)
     navigate({
       pathname: '/category',
       search: `?${createSearchParams({
@@ -24,13 +22,10 @@ export default function Search(class1 = 'text-blue') {
       })}`
     })
   }
-
-  // get list category
-  // Queries
   const { data: ListCategory } = useQuery({
     queryKey: ['getCategory'],
     queryFn: categoryAPI.getCategery,
-    staleTime: 5 * 60 * 1000, // Dữ liệu sẽ được coi là "mới" trong 5 phút
+    staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000 // Dữ liệu được giữ trong cache tối đa 10 phút
   })
 
@@ -39,20 +34,16 @@ export default function Search(class1 = 'text-blue') {
   var handleClick = () => {
     setopenCategory(!openCategory)
   }
-  const navigate = useNavigate()
-  const handleDrop = () => {
-    // navigate({
-    //   pathname: '/category',
-    //   search: `?${createSearchParams({
-    //     keyword: 'John'
-    //   })}`
-    // })
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category) // Cập nhật danh mục được chọn
   }
+  const navigate = useNavigate()
+  const handleDrop = () => {}
   const { data } = useQuery({
     queryKey: ['getCart'],
     queryFn: CartAPI.getCart,
-    enabled: isAuthenticated, // Chỉ gọi query khi người dùng đã đăng nhập,
-    staleTime: 1000 * 60 * 10 // Dữ liệu được coi là tươi trong 10 phút
+    enabled: isAuthenticated,
+    staleTime: 1000 * 60 * 10
   })
 
   var handleNavigate = () => {
@@ -498,75 +489,47 @@ export default function Search(class1 = 'text-blue') {
       </div>
       {openCategory && (
         <div
-          className='grid grid-cols-8 px-24  gap-x-3 z-10 absolute bg-white '
+          className='grid grid-cols-6 px-24 gap-x-3 z-10 absolute bg-white'
           onMouseLeave={() => setopenCategory(false)}
         >
-          <div className='col-span-2 bg-yellow-500  pt-3 bordder border-r-2'>
+          <div className='col-span-2 bg-yellow-500 pt-3 border border-r-2'>
             <div className='flex flex-col rounded-lg'>
               {ListCategory?.data?.data &&
-                ListCategory.data.data.map((element, index) => {
-                  return (
-                    <div
-                      className={`flex p-3 gap-2 text-black mb-3 mr-2 items-center rounded-lg font-medium hover:bg-[#EBFAFB] ${index === 0 ? 'bg-[#EBFAFB]' : ''}`}
-                    >
-                      <div className='w-[40px] h-[40px] '>
-                        <img src={element.category_thumbnail} alt='nopic' className='w-full h-full object-cover' />
-                      </div>
-
-                      <span className='capitalize text-[15px]'>{element.category_name}</span>
-                    </div>
-                  )
-                })}
-            </div>
-          </div>
-          {/* children */}
-          <div className='col-span-4 bg-yellow-500 rounded-lg pt-3   '>
-            <div className='flex gap-4  cursor-pointer '>
-              {ListCategory?.data?.data &&
-                ListCategory?.data?.data.map((element) => {
-                  return element.children.map((elChildren) => {
-                    return (
-                      <div className='flex flex-col items-center gap-y-2  w-[120px] h-[160px] p-2 '>
-                        <div
-                          onClick={() => handleClickCategory(elChildren.category_name)}
-                          className='w-[100px] h-[100px]'
-                        >
-                          <img
-                            src={elChildren.category_thumbnail}
-                            alt='anh'
-                            className='w-full h-full object-cover rounded-md border'
-                          />
-                        </div>
-                        <p className='text-center text-sm font-medium text-gray-700'>{elChildren.category_name}</p>
-                      </div>
-                    )
-                  })
-                })}
-
-              <div className='flex flex-col items-center gap-y-2  w-[120px] h-[160px] p-2  '>
-                <div className='w-[100px] h-[100px]  rounded-md border  flex justify-center items-center '>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='size-6 w-full '
+                ListCategory.data.data.map((element, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleCategorySelect(element)}
+                    className={`flex p-3 gap-2 text-black mb-3 mr-2 items-center rounded-lg font-medium hover:bg-[#EBFAFB] ${selectedCategory?.category_id === element.category_id ? 'bg-[#EBFAFB]' : ''}`}
                   >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='m8.25 4.5 7.5 7.5-7.5 7.5' />
-                  </svg>
-                </div>
-                <p className='text-center text-sm font-medium text-gray-700'>Xem tất cả</p>
-              </div>
+                    <div className='w-[40px] h-[40px]'>
+                      <img src={element.category_thumbnail} alt='nopic' className='w-full h-full object-cover' />
+                    </div>
+                    <span className='capitalize text-[15px]'>{element.category_name}</span>
+                  </div>
+                ))}
             </div>
           </div>
-          <div className='col-span-2 flex flex-col justify-between rounded-lg overflow-hidden  pt-3  mb-5'>
-            <div className=''>
-              <img
-                src='https://prod-cdn.pharmacity.io/e-com/images/banners/20240920042514-0-Web_AllScreen%20Directory%20menu0310_%28522x976%29px.webp'
-                alt=''
-                className=''
-              />
+
+          <div className='col-span-4 bg-yellow-500 rounded-lg pt-3'>
+            <div className='grid grid-cols-8 gap-4 cursor-pointer'>
+              {selectedCategory?.children?.length > 0 ? (
+                selectedCategory.children.map((elChildren, childIndex) => (
+                  <div key={childIndex} className='flex flex-col items-center gap-y-2 w-[120px] h-[160px] p-2'>
+                    <div onClick={() => handleClickCategory(elChildren.category_name)} className='w-[100px] h-[100px]'>
+                      <img
+                        src={elChildren.category_thumbnail}
+                        alt='anh'
+                        className='w-full h-full object-cover rounded-md border'
+                      />
+                    </div>
+                    <p className='text-center text-sm font-medium text-gray-700'>{elChildren.category_name}</p>
+                  </div>
+                ))
+              ) : (
+                <div className='flex justify-center items-center w-full h-full'>
+                  <p className='text-center text-sm font-medium text-gray-700'>Không có danh mục con</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -574,5 +537,3 @@ export default function Search(class1 = 'text-blue') {
     </>
   )
 }
-
-//    src='https://prod-cdn.pharmacity.io/e-com/images/static-website/pharmacity-logo.svg'

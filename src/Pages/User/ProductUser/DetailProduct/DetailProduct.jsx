@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import CartAPI from '../../../../Api/user/cart'
-
+// Chi tiet san pham
 const ProductDetail = () => {
   const { productID } = useParams() // Get productId from the URL
   const [productData, setProductData] = useState(null)
@@ -28,7 +28,6 @@ const ProductDetail = () => {
   }, [productID])
 
   // Function to handle adding product to the cart
-
   const addToCart = async () => {
     if (!productData) return
 
@@ -52,6 +51,9 @@ const ProductDetail = () => {
       }
     }
   }
+
+  // Check if product is out of stock
+  const isOutOfStock = productData && productData.product_quantity === 0
 
   return (
     <div className='px-6 md:px-24 mt-10 mb-10'>
@@ -100,7 +102,6 @@ const ProductDetail = () => {
 
             <div className='flex items-center justify-between mb-3 md:mb-4 mt-2'>
               <div className='flex items-center space-x-1'>
-                <p className='text-sm text-neutral-600'>{productData.product_id}</p>
                 <span className='h-1 w-1 rounded-full bg-neutral-600'></span>
                 <a className='text-sm text-[#1A51A2]' href='/thuong-hieu/urgo'>
                   Thương hiệu: {productData.brand_name}
@@ -113,7 +114,7 @@ const ProductDetail = () => {
               <h3 className='text-2xl font-bold text-[#1A51A2]'>{productData.product_price}₫/Hộp</h3>
               <div className='flex items-center'>
                 <p className='relative text-lg font-semibold text-neutral-600'>
-                  {productData.product_discount}₫
+                  {productData.product_discount}
                   <span className='absolute inset-x-0 top-1/2 h-[1px] bg-neutral-600'></span>
                 </p>
                 <span className='bg-pink-500 text-xs font-medium text-white px-2 py-1 rounded-sm'>-10%</span>
@@ -125,22 +126,30 @@ const ProductDetail = () => {
             </p>
 
             {/* Quantity selector */}
-            <div className='flex items-center mt-4'>
-              <label htmlFor='quantity' className='mr-2 font-semibold'>
-                Số lượng:
-              </label>
-              <input
-                id='quantity'
-                type='number'
-                value={quantity}
-                min='1'
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                className='border rounded-md p-2 w-20'
-              />
-            </div>
+            {isOutOfStock ? (
+              <p className='text-red-500 font-semibold mt-4'>Đã hết hàng</p>
+            ) : (
+              <div className='flex items-center mt-4'>
+                <label htmlFor='quantity' className='mr-2 font-semibold'>
+                  Số lượng:
+                </label>
+                <input
+                  id='quantity'
+                  type='number'
+                  value={quantity}
+                  min='1'
+                  max={productData.product_quantity} // Max quantity should not exceed available stock
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  className='border rounded-md p-2 w-20'
+                />
+              </div>
+            )}
+
             <button
               className='mt-6 bg-blue-300 text-red-600 font-bold py-2 px-4 rounded-lg hover:bg-blue-700'
+              style={{ backgroundColor: 'wheat' }}
               onClick={addToCart}
+              disabled={isOutOfStock} // Disable the button if the product is out of stock
             >
               Thêm vào giỏ hàng
             </button>
@@ -163,6 +172,9 @@ const ProductDetail = () => {
                 </p>
                 <p className='text-lg text-neutral-700'>
                   <strong>Chỉ định:</strong> {productData.specification}
+                </p>
+                <p className='text-lg text-neutral-700'>
+                  <strong>Số lượng còn lại:</strong> {productData.product_quantity}
                 </p>
               </div>
             </div>

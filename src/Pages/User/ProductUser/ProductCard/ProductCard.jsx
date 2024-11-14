@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
+// Card Product
 const ProductCard = ({ product_id, image, labelImage, title, price, oldPrice, likes, soldCount }) => {
   console.log('Product ID:', product_id)
   return (
@@ -30,7 +30,6 @@ const ProductCard = ({ product_id, image, labelImage, title, price, oldPrice, li
 
         {/* Product Price and Details */}
         <div className='p-2'>
-          {oldPrice && <del className='block h-5 text-sm font-semibold text-neutral-600'>{oldPrice}</del>}
           <span className='mt-[2px] block h-6 text-base font-bold text-blue'>{price}</span>
 
           {/* Likes and Sold Count */}
