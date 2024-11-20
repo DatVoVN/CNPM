@@ -8,6 +8,7 @@ import AdminEditProduct from '../Component/AdminEditProduct'
 import AdminViewProduct from '../Component/AdminViewProduct'
 import AdminBrands from '../Component/AdminBrands'
 import AdminManagement from '../Component/AdminManagement'
+import AdminCustomers from '../Component/AdminCustomers'
 import AdminSetting from '../Component/AdminSetting'
 import HomeUser from '../Pages/User/HomeUser/HomeUser.js'
 import RegisterLayout from '../Layouts/RegisterLayout/RegisterLayout.jsx'
@@ -219,6 +220,14 @@ export default function useRouterElement() {
       element: (
         <AdminMainLayout>
           <AdminManagement />
+        </AdminMainLayout>
+      )
+    },
+    {
+      path: '/admin/customers',
+      element: (
+        <AdminMainLayout>
+          <AdminCustomers />
         </AdminMainLayout>
       )
     },
