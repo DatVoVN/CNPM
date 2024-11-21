@@ -48,6 +48,7 @@ function Order() {
         console.error('Error fetching payment methods:', error)
       })
   }, [])
+  console.log('day là payment:', paymentMethods)
 
   useEffect(() => {
     // Fetch delivery methods from the API
@@ -116,11 +117,11 @@ function Order() {
 
     const checkoutData = {
       receiver_address_id: selectedReceiver.receiver_address_id,
-      payment_id: selectedPayment.payment_id,
-      delivery_id: selectedDelivery.delivery_id,
+      payment_id: selectedPayment.payment_method_id,
+      delivery_id: selectedDelivery.delivery_method_id,
       ids_cart: checkedProducts
     }
-
+    console.log('checkout', checkoutData)
     axios
       .post('https://lucifernsz.com/PBL6-BE/public/api/orders/checkout-cart', checkoutData, {
         headers: { Authorization: `Bearer ${token}` }
@@ -197,11 +198,11 @@ function Order() {
         <div className='grid grid-cols-2 gap-4 mt-4'>
           {deliveryMethods.map((delivery) => (
             <button
-              key={delivery.delivery_id}
-              className={`p-4 border rounded-lg ${selectedDelivery?.delivery_id === delivery.delivery_id ? 'bg-gray-200' : ''}`}
+              key={delivery.delivery__method_id}
+              className={`p-4 border rounded-lg ${selectedDelivery?.delivery_method_id === delivery.delivery_method_id ? 'bg-gray-200' : ''}`}
               onClick={() => handleDeliverySelection(delivery)}
             >
-              {delivery.delivery_method}
+              {delivery.delivery_method_name}
             </button>
           ))}
         </div>
@@ -213,11 +214,11 @@ function Order() {
         <div className='grid grid-cols-2 gap-4 mt-4'>
           {paymentMethods.map((payment) => (
             <button
-              key={payment.payment_id}
-              className={`p-4 border rounded-lg ${selectedPayment?.payment_id === payment.payment_id ? 'bg-gray-200' : ''}`}
+              key={payment.payment_method_id}
+              className={`p-4 border rounded-lg ${selectedPayment?.payment_method_id === payment.payment_method_id ? 'bg-gray-200' : ''}`}
               onClick={() => handlePaymentSelection(payment)}
             >
-              {payment.payment_method}
+              {payment.payment_method_name}
             </button>
           ))}
         </div>

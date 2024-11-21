@@ -3,8 +3,6 @@ import { getAccessToken, saveAccessToken, saveProfile, tokenBear } from '.'
 
 class Http {
   instance
-  // lỗi :  'accessToken' has no initializer and is not definitely assigned in the constructor. : ko dc use
-  // khởi tạo biến ở class thì khởi tạo trong contructor luôn
   accessToken
   constructor() {
     this.accessToken = getAccessToken()
@@ -32,10 +30,7 @@ class Http {
       }
     )
     this.instance.interceptors.response.use(
-      // chuyển function (response) thành arrow function để truy cập dc private
       (response) => {
-        // Any status code that lie within the range of 2xx cause this function to trigger
-        // Do something with response data
         const { url } = response.config
         if (url == 'user/login') {
           const tokenBear = 'Bearer ' + response.data.data?.access_token

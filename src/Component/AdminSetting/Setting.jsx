@@ -434,7 +434,7 @@ const AdminSetting = () => {
                       type='submit'
                       className='bg-[#008f99] text-[#ffffff] px-2 py-4 w-full text-sm font-medium rounded flex items-center justify-center gap-4 hover:opacity-80'
                     >
-                      <span>Save changes</span>
+                      <span>Save Changes</span>
                       <TickCircle size={20} />
                     </button>
                   </div>

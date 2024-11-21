@@ -5,8 +5,6 @@ import { createSearchParams, useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import useQueryParams from '../../../hook/useSearchParam'
 import productAPI from '../../../Api/user/product'
-import { Link } from 'react-router-dom'
-
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import categoryAPI from '../../../Api/user/category'
@@ -14,13 +12,11 @@ import brandAPI from '../../../Api/user/brand'
 import { useLocation } from 'react-router-dom'
 import { schemaPrice } from '../../../Component/ValidateScheme/Validate'
 import Loading from '../../../Component/Loading/Loading'
-import { generateNameId } from '../../../until/index.js'
 import ProductCard from '../ProductUser/ProductCard/ProductCard.jsx'
 export default function CategoryListProduct() {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
-  const brands = queryParams.getAll('brands[]')
-
+  const brands = queryParams.getAll('brand_name[]')
   const [visibleBrands, setVisibleBrands] = useState(5)
   const [filteredBrands, setFilteredBrands] = useState([])
   const [NameBrands, setNameBrands] = useState(brands || [])
@@ -32,26 +28,41 @@ export default function CategoryListProduct() {
     resolver: yupResolver(schemaPrice)
   })
 
-  const onSubmit = (data) => {
+  const handlePriceChange = () => {
+    // Lấy giá trị từ các input trường giá
+    const price_from = document.getElementById('price_from').value
+    const price_to = document.getElementById('price_to').value
+
+    // Kiểm tra giá trị nhập vào
+    console.log('Price range:', price_from, price_to)
+
+    // Tạo tham số truy vấn cho URL
     const searchParams = createSearchParams({
-      ...useQueryParameter,
-      price_max: data.price_max,
-      price_min: data.price_min
+      ...useQueryParameter, // Thêm các tham số hiện có
+      price_from: price_from,
+      price_to: price_to
     }).toString()
+
+    console.log('Search params:', searchParams)
+
+    // Điều hướng đến trang sản phẩm với các tham số mới
     navigate({
-      pathname: `/category`,
+      pathname: `/products`,
       search: `?${searchParams}`
     })
   }
   const navigate = useNavigate()
   const { categorySlug } = useParams()
   const useQueryParameter = useQueryParams()
-  useQueryParameter.paginate = 6
-  console.log(useQueryParameter)
+  useQueryParameter.paginate = 10
   const { data: productsData } = useQuery({
     queryKey: ['products', useQueryParameter],
     queryFn: () => {
+      console.log('Query parameters sent to API:', useQueryParameter)
       return productAPI.getAllProduct(useQueryParameter)
+    },
+    onSuccess: (data) => {
+      console.log('API response data:', data)
     }
   })
   if (useQueryParameter.category_name == 'Thuốc kê đơn') {
@@ -89,7 +100,6 @@ export default function CategoryListProduct() {
       sortlatest: false
     }).toString()
 
-    console.log(searchParams)
     navigate({
       pathname: `/category`,
       search: `?${searchParams}`
@@ -104,34 +114,45 @@ export default function CategoryListProduct() {
     })
   }
   const handleRadioChange = (e) => {
-    const [price_min, price_max] = e.target.value.split('-')
+    console.log('Radio button changed:', e.target.value) // In ra giá trị radio được chọn
+    const [price_from, price_to] = e.target.value.split('-')
+    console.log('Price range:', price_from, price_to) // Kiểm tra giá trị phân tách
+
     const searchParams = createSearchParams({
       ...useQueryParameter,
-      price_min: price_min,
-      price_max: price_max
+      price_from: price_from,
+      price_to: price_to
     }).toString()
+
+    console.log('Search params:', searchParams) // Kiểm tra params
+
     navigate({
-      pathname: `/category`,
+      pathname: `/products`,
       search: `?${searchParams}`
     })
   }
-
   const isChecked = (min, max) => {
-    return useQueryParameter?.price_max == max && useQueryParameter?.price_min == min
+    return useQueryParameter.price_from === min && useQueryParameter.price_to === max
   }
   const { data: nameBrand, isSuccess } = useQuery({
     queryKey: ['getNameBrand'],
     queryFn: brandAPI.getNameBrand,
-    staleTime: 1000 * 60 * 5 // Dữ liệu được coi là mới trong 5 phút
+    staleTime: 1000 * 60 * 5
   })
 
   const handleChangeBrand = (e) => {
     const selectedBrand = e.target.value
-    const fillterBrand = nameBrand?.data?.data.filter((brand) => {
-      return brand.brand_name.toLowerCase().startsWith(selectedBrand.toLowerCase())
-    })
-    setFilteredBrands(fillterBrand)
+
+    if (nameBrand?.data?.data) {
+      const filterBrand = nameBrand.data.data.filter((brand) => {
+        return brand.brand_name.toLowerCase().startsWith(selectedBrand.toLowerCase())
+      })
+      setFilteredBrands(filterBrand)
+    } else {
+      setFilteredBrands([])
+    }
   }
+
   useEffect(() => {
     if (isSuccess && nameBrand?.data?.data) {
       setFilteredBrands(nameBrand.data.data)
@@ -146,29 +167,29 @@ export default function CategoryListProduct() {
   }
   // xử lí check box
   const handleCheckboxChange = (e) => {
-    let updateBrands
-    setNameBrands((prev) => {
-      if (e.target.checked) {
-        // brands lấy trên url
-        updateBrands = [...brands, e.target.value]
-      } else {
-        // Remove brand if unchecked
-        updateBrands = brands.filter((brand) => {
-          return brand !== e.target.value
-        })
-      }
-      const searchParams = createSearchParams({
-        ...useQueryParameter,
-        'brands[]': updateBrands
-      }).toString()
-      navigate({
-        pathname: `/category`,
-        search: `?${searchParams}`
-      })
-      return updateBrands
+    let updatedBrands = [...NameBrands]
+
+    if (e.target.checked) {
+      updatedBrands.push(e.target.value)
+    } else {
+      updatedBrands = updatedBrands.filter((brand) => brand !== e.target.value)
+    }
+
+    setNameBrands(updatedBrands)
+    const searchParams = createSearchParams({
+      ...useQueryParameter,
+      'brand_names[]': updatedBrands
+    }).toString()
+
+    console.log('Updated query params:', searchParams)
+    navigate({
+      pathname: `/products`,
+      search: `?${searchParams}`
     })
   }
+
   if (isLoading) return <Loading />
+
   return (
     <div className=''>
       <div className='px-24'>
@@ -232,40 +253,42 @@ export default function CategoryListProduct() {
           <div className=' '>
             <p className=' font-semibold mt-5'>Khoảng giá</p>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div class='relative flex-col mt-4'>
-                <div class='relative flex mt-4 '>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handlePriceChange()
+              }}
+            >
+              <div className='relative flex-col mt-4'>
+                <div className='relative flex mt-4'>
                   <input
+                    id='price_from'
                     min='0'
                     className='w-full border text-neutral-900 rounded-lg focus:ring-neutral-500 focus:border-neutral-700 outline-none p-2.5 h-9 truncate border-neutral-700 text-base font-medium placeholder:text-neutral-700 md:text-sm pr-10'
                     placeholder='Tối thiểu'
-                    type='text'
-                    {...register('price_min')}
+                    type='number'
                   />
-
-                  <span class='absolute right-0 flex h-full items-center px-3'>
-                    <span class='text-base font-normal text-neutral-700 md:text-sm'>₫</span>
+                  <span className='absolute right-0 flex h-full items-center px-3'>
+                    <span className='text-base font-normal text-neutral-700 md:text-sm'>₫</span>
                   </span>
                 </div>
-                <p className='text-red-600 mt-1 text-sm'>{errors.price_min?.message}</p>
-                <div class='relative flex mt-4 '>
+                <div className='relative flex mt-4'>
                   <input
-                    max='100000'
+                    id='price_to'
+                    max='1000000'
                     className='w-full border text-neutral-900 rounded-lg focus:ring-neutral-500 focus:border-neutral-700 outline-none p-2.5 h-9 truncate border-neutral-700 text-base font-medium placeholder:text-neutral-700 md:text-sm pr-10'
                     placeholder='Tối đa'
                     type='number'
-                    {...register('price_max')}
                   />
-                  <span class='absolute right-0 flex h-full items-center px-3'>
-                    <span class='text-base font-normal text-neutral-700 md:text-sm'>₫</span>
+                  <span className='absolute right-0 flex h-full items-center px-3'>
+                    <span className='text-base font-normal text-neutral-700 md:text-sm'>₫</span>
                   </span>
                 </div>
-                <p className='text-red-600 mt-1 text-sm'>{errors.price_max?.message}</p>
               </div>
 
               <button
                 data-size='sm'
-                className='mt-4 relative justify-center outline-none font-semibold text-white bg-blue border-0 hover:bg-blue  text-sm px-4 py-2 h-9 items-center rounded-lg hidden md:block w-full'
+                className='mt-4 relative justify-center outline-none font-semibold text-white bg-blue border-0 hover:bg-blue text-sm px-4 py-2 h-9 items-center rounded-lg hidden md:block w-full'
                 type='submit'
               >
                 <span>Áp dụng</span>
@@ -278,7 +301,7 @@ export default function CategoryListProduct() {
                 name='price'
                 value='1-100000'
                 onChange={handleRadioChange}
-                checked={isChecked('1', '100000')}
+                checked={isChecked('1.00', '100000.00')}
               />
               <label> Dưới 100.000 đ</label>
             </div>
@@ -289,7 +312,7 @@ export default function CategoryListProduct() {
                 name='price'
                 value='100000-300000'
                 onChange={handleRadioChange}
-                checked={isChecked('100000', '300000')}
+                checked={isChecked('100000.00', '300000.00')}
               />
               <label> 100.000 đ - 300.000 đ</label>
             </div>
@@ -364,7 +387,7 @@ export default function CategoryListProduct() {
               className='p-3  border-2 rounded-lg text-[#787878] hover:text-black'
               onClick={() => handlePriceDes()}
             >
-              Giảm giá dần{' '}
+              Giá giảm dần{' '}
             </button>
             <button className='p-3  border-2 rounded-lg text-[#787878] hover:text-black' onClick={handlePriceAsc}>
               Giá tăng dần{' '}

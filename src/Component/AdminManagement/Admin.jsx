@@ -388,7 +388,9 @@ const Admin = () => {
         return
       }
       const result = await response.json()
-      const data = result.data.data
+      console.log(result)
+      const data = result.data
+      console.log('data', data)
       const tableData = data
         .map((item) => ({
           key: item.admin_id,

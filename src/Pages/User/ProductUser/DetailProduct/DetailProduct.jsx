@@ -127,7 +127,7 @@ const ProductDetail = () => {
 
             {/* Quantity selector */}
             {isOutOfStock ? (
-              <p className='text-red-500 font-semibold mt-4'>Đã hết hàng</p>
+              <p className='text-red-500 font-semibold mt-4 '>Đã hết hàng</p>
             ) : (
               <div className='flex items-center mt-4'>
                 <label htmlFor='quantity' className='mr-2 font-semibold'>
@@ -144,10 +144,9 @@ const ProductDetail = () => {
                 />
               </div>
             )}
-
             <button
-              className='mt-6 bg-blue-300 text-red-600 font-bold py-2 px-4 rounded-lg hover:bg-blue-700'
-              style={{ backgroundColor: 'wheat' }}
+              className={`mt-6 font-bold py-2 px-4 rounded-lg hover:bg-blue-700 ${isOutOfStock ? 'bg-grey-300 text-grey-600' : 'bg-blue-300 text-red-600'}`}
+              style={{ backgroundColor: isOutOfStock ? 'grey' : 'wheat' }}
               onClick={addToCart}
               disabled={isOutOfStock} // Disable the button if the product is out of stock
             >

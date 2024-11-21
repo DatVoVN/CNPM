@@ -1,5 +1,5 @@
 // Hiên thị danh mục
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Popover } from 'antd'
 import Avatar1 from '../../../../Component/Avatar/Avatar'
 import { useNavigate, createSearchParams, Link } from 'react-router-dom'
@@ -14,6 +14,42 @@ export default function Search(class1 = 'text-blue') {
   const { isAuthenticated, logout, isProfile } = useContext(AuthContext)
   const [openCategory, setopenCategory] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [medicines, setMedicines] = useState([])
+  const [filteredMedicines, setFilteredMedicines] = useState([])
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  // Fetch medicines from API
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      try {
+        const response = await fetch('https://lucifernsz.com/PBL6-BE/public/api/products') // Replace with your actual API URL
+        const data = await response.json()
+        setMedicines(data.data)
+      } catch (error) {
+        console.error('Failed to fetch medicines:', error)
+      }
+    }
+
+    fetchMedicines()
+  }, [])
+
+  // Handle input change and filter the medicines
+  const handleDrop = (e) => {
+    const value = e.target.value
+    setSearchTerm(value)
+
+    if (value.trim() === '') {
+      setFilteredMedicines([])
+      setShowDropdown(false)
+      return
+    }
+
+    // Filter medicines based on the search term
+    const filtered = medicines.filter((medicine) => medicine.product_name.toLowerCase().includes(value.toLowerCase()))
+    setFilteredMedicines(filtered)
+    setShowDropdown(true)
+  }
   const handleClickCategory = (categoryName) => {
     navigate({
       pathname: '/category',
@@ -38,7 +74,6 @@ export default function Search(class1 = 'text-blue') {
     setSelectedCategory(category) // Cập nhật danh mục được chọn
   }
   const navigate = useNavigate()
-  const handleDrop = () => {}
   const { data } = useQuery({
     queryKey: ['getCart'],
     queryFn: CartAPI.getCart,
@@ -293,10 +328,10 @@ export default function Search(class1 = 'text-blue') {
                 alt='Pharmacity Logo'
               />
             </div>
-            <div className='z-[11] grid w-full grid-cols-1 md:z-[10]'>
+            <div className='relative z-[11] w-full'>
               <div className='w-full'>
                 <div className='mx-auto w-full'>
-                  <div className=' text-white flex bg-white rounded-md items-center justify-center'>
+                  <div className='text-white flex bg-white rounded-md items-center justify-center'>
                     <button className='ml-2'>
                       <span className='p-icon inline-flex align-[-0.125em] justify-center max-h-full max-w-full w-6 h-10 text-black'>
                         <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -316,75 +351,32 @@ export default function Search(class1 = 'text-blue') {
                       </span>
                     </button>
                     <input
-                      className='w-full border-neutral-500  focus:ring-neutral-500 focus:border-neutral-700 outline-none p-3.5 search-input flex h-10 items-center justify-start rounded-sm border-0  py-1 pl-10 text-start text-sm font-medium text-neutral-800  truncate '
+                      className='w-full border-neutral-500 focus:ring-neutral-500 focus:border-neutral-700 outline-none p-3.5 search-input flex h-10 items-center justify-start rounded-sm border-0 py-1 pl-10 text-start text-sm font-medium text-neutral-800 truncate'
                       placeholder='Tên thuốc, triệu chứng, vitamin và thực phẩm chức năng'
-                      onFocus={handleDrop}
+                      value={searchTerm}
+                      onChange={handleDrop}
+                      onFocus={() => setShowDropdown(true)} // Show dropdown when input is focused
                     />
                   </div>
                 </div>
               </div>
-              <div className='flex mt-[4px] space-x-3 text-white test-xs '>
-                <div className='h-5'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      khẩu trang
-                    </span>
-                  </a>
+              {showDropdown && (
+                <div className='absolute bg-white border border-gray-300 rounded shadow-md mt-1 w-full z-[12] max-h-60 overflow-y-auto'>
+                  {filteredMedicines.length > 0 ? (
+                    filteredMedicines.map((medicine) => (
+                      <Link
+                        to={`/detail/${medicine.product_id}`} // Redirects to the product detail page
+                        key={medicine.product_id}
+                        className='dropdown-item p-2 hover:bg-gray-200 cursor-pointer block' // Added block to make each item on its own line
+                      >
+                        {medicine.product_name}
+                      </Link>
+                    ))
+                  ) : (
+                    <div className='dropdown-item p-2 text-gray-500'>Không tìm thấy kết quả</div>
+                  )}
                 </div>
-                <div className='h-5'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      hạ sốt
-                    </span>
-                  </a>
-                </div>
-                <div className='h-5'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      giải rượu
-                    </span>
-                  </a>
-                </div>
-
-                <div className='h-5'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      nhỏ mắt
-                    </span>
-                  </a>
-                </div>
-
-                <div className='h-5'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      collagen
-                    </span>
-                  </a>
-                </div>
-                <div className='h-5'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      chăm sóc mẹ bầu
-                    </span>
-                  </a>
-                </div>
-
-                <div className='lg:h-5 lg:block hidden'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      kem chống nắng
-                    </span>
-                  </a>
-                </div>
-
-                <div className=' lg:h-5 lg:block hidden'>
-                  <a href=''>
-                    <span title='khẩu trang' class='text-[14px] leading-[20px]'>
-                      Mua 1 tặng 1
-                    </span>
-                  </a>
-                </div>
-              </div>
+              )}
             </div>
             <div className='flex relative'>
               <Popover content={content} placement='bottomRight' overlayStyle={{ width: '300px' }}>

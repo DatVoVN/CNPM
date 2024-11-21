@@ -25,10 +25,7 @@ const Sidebar = () => {
     { id: 'categories', name: 'Categories' }
   ]
 
-  const Users = [
-    { id: 'customers', name: 'Customers' },
-    { id: 'manage-admins', name: 'Admin' }
-  ]
+  const Users = [{ id: 'manage-admins', name: 'Admin' }]
 
   const location = useLocation()
   const [selectedId, setSelectedId] = useState(null)
@@ -182,13 +179,6 @@ const Sidebar = () => {
           <SideBarItem name='Orders' iconName={<Bill className='w-6' />} />
         </NavLink>
         <NavLink
-          to='/admin/reports'
-          className={activeNav === 'reports' ? 'bg-[#008f99]' : ''}
-          onClick={() => handleNavClick('reports')}
-        >
-          <SideBarItem name='Reports' iconName={<FavoriteChart className='w-6' />} />
-        </NavLink>
-        <NavLink
           to='/admin/receipts'
           className={activeNav === 'receipts' ? 'bg-[#008f99]' : ''}
           onClick={() => handleNavClick('receipts')}
@@ -260,27 +250,6 @@ const Sidebar = () => {
             </ul>
           </div>
         }
-        <NavLink
-          to='/admin/posts'
-          className={activeNav === 'posts' ? 'bg-[#008f99]' : ''}
-          onClick={() => handleNavClick('posts')}
-        >
-          <SideBarItem name='Posts' iconName={<Blogger className='w-6' />} />
-        </NavLink>
-        <NavLink
-          to='/admin/comment_review'
-          className={activeNav === 'comment_review' ? 'bg-[#008f99]' : ''}
-          onClick={() => handleNavClick('comment_review')}
-        >
-          <SideBarItem name='Comments/reviews' iconName={<Keyboard className='w-6' />} />
-        </NavLink>
-        <NavLink
-          to='/admin/illness'
-          className={activeNav === 'illness' ? 'bg-[#008f99]' : ''}
-          onClick={() => handleNavClick('illness')}
-        >
-          <SideBarItem name='illness' iconName={<Hospital className='w-6' />} />
-        </NavLink>
         <NavLink
           to='/admin/setting'
           className={activeNav === 'setting' ? 'bg-[#008f99]' : ''}

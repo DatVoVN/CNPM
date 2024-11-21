@@ -13,7 +13,7 @@ export default function Adress() {
     queryFn: AddressApi.getAddress_receive
   })
 
-  console.log(data?.data?.data)
+  console.log('Day la adress', data?.data?.data)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const showModal = () => {

@@ -27,6 +27,7 @@ import { AuthContext } from '../context/app.context.jsx'
 import NotPermitted from '../Component/NotPermitted/NotPermitted.jsx'
 import AdminLogin from '../Component/AdminLogin/AdminLogin.jsx'
 import Order from '../Pages/User/Order/Order.jsx'
+
 export default function useRouterElement() {
   const isAdminRoute = window.location.pathname.toLowerCase().startsWith('/admin')
   // Router có sửa
@@ -81,6 +82,14 @@ export default function useRouterElement() {
         },
         {
           path: '/category',
+          element: (
+            <MainLayoutUser>
+              <CategoryListProduct />
+            </MainLayoutUser>
+          )
+        },
+        {
+          path: '/products',
           element: (
             <MainLayoutUser>
               <CategoryListProduct />

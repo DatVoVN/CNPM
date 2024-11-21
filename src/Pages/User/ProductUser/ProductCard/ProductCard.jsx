@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 // Card Product
 const ProductCard = ({ product_id, image, labelImage, title, price, oldPrice, likes, soldCount }) => {
-  console.log('Product ID:', product_id)
   return (
     <Link to={`/detail/${product_id}`}>
       <div className='rounded-lg overflow-hidden border shadow-md bg-white h-full'>
