@@ -686,7 +686,7 @@ const Customers = () => {
           </h1>
           <p className='mt-[11px]'>List of customers available</p>
         </div>
-        <button
+        {/* <button
           className='min-w-[162px] h-[46px] px-[18px] py-[16px] bg-[#F0483E] rounded-[4px] text-[#FFFFFF] flex gap-x-[10px] font-bold items-center text-[14px]'
           onClick={() => {
             setOpenModal(true)
@@ -695,7 +695,7 @@ const Customers = () => {
         >
           <Add size='20' />
           Add new customer
-        </button>
+        </button> */}
       </header>
       <Modal
         destroyOnClose
@@ -840,7 +840,7 @@ const Customers = () => {
           <div className='flex items-center w-[250px] justify-between text-[14px] rounded-[4px] relative'>
             <input
               type='text'
-              placeholder='Search for admins'
+              placeholder='Search for customers'
               className='searchBox__input border-[1px] border-solid border-[#e8ebed] bg-[#fafafa] outline-none bg-transparent w-[100%] py-[15px] px-[15px] rounded-[4px]'
               value={searchValue}
               autoFocus
